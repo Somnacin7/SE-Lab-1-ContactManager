@@ -13,5 +13,11 @@
     <string name="user_phone_number">Phone Number</string>
     <string name="user_email">Email</string>
     <string name="user_address">Address</string>
+    <string name="settings_title">Privacy Settings</string>
+    <string name="settings_item">Item</string>
+    <string name="settings_access">Allow Access</string>
+    <string name="settings_phone_number">Phone Number</string>
+    <string name="settings_email">Email</string>
+    <string name="settings_address">Address</string>
 
 </resources>

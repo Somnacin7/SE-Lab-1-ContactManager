@@ -1,17 +1,26 @@
 package com.example.guilhermecortes.contactmanager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -23,7 +32,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements SettingsDialog.OnDialogPositiveListener
+{
+
+    public static final String PREFERENCES = "settings";
 
     private EditText nameTxt, phoneTxt, emailTxt, addressTxt;
     ImageView contactImageImgView;
@@ -112,6 +124,18 @@ public class MainActivity extends Activity {
         contactListView.setAdapter(adapter);
     }
 
+    @Override
+    public void OnDialogPositive()
+    {
+        if (contactListView != null)
+        {
+            if (contactListView.getAdapter() != null)
+            {
+                ((ContactListAdapter) contactListView.getAdapter()).notifyDataSetChanged();
+            }
+        }
+    }
+
     //add contact
 //    private void addContact(String name, String phone, String email, String address){
 //        Contacts.add(new Contact(name, phone, email, address));
@@ -130,14 +154,42 @@ public class MainActivity extends Activity {
 
             Contact currentContact = Contacts.get(position);
 
+            SharedPreferences settings = getSharedPreferences(PREFERENCES, 0);
+
+
             TextView name = (TextView) view.findViewById(R.id.contactName);
             name.setText(currentContact.get_name());
+
             TextView phone = (TextView) view.findViewById(R.id.phoneNumber);
-            phone.setText(currentContact.get_phone());
+            if (settings.getBoolean("phoneNumber", false))
+            {
+                phone.setText(Html.fromHtml("<a href='#'>" + currentContact.get_phone() + "</a>"));
+            }
+            else
+            {
+                phone.setText(currentContact.get_phone());
+            }
+
             TextView email = (TextView) view.findViewById(R.id.emailAddress);
-            email.setText(currentContact.get_email());
+            if (settings.getBoolean("email", false))
+            {
+                email.setText(Html.fromHtml("<a href='#'>" + currentContact.get_email() + "</a>"));
+            }
+            else
+            {
+                email.setText(currentContact.get_email());
+            }
+
             TextView address = (TextView) view.findViewById(R.id.cAddress);
-            address.setText(currentContact.get_address());
+            if (settings.getBoolean("address", false))
+            {
+                address.setText(Html.fromHtml("<a href='#'>" + currentContact.get_address() + "</a>"));
+            }
+            else
+            {
+                address.setText(currentContact.get_address());
+            }
+
             ImageView ivContactImage = (ImageView) view.findViewById(R.id.ivContactImage);
             ivContactImage.setImageURI(currentContact.get_imageURI());
 
@@ -162,9 +214,17 @@ public class MainActivity extends Activity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            openSettingsDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void openSettingsDialog()
+    {
+        SettingsDialog settings = new SettingsDialog();
+        settings.setListener(this);
+        settings.show(getFragmentManager(), "settings");
     }
 }
