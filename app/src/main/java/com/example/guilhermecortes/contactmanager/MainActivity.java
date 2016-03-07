@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -108,6 +109,20 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
             }
         });
 
+        Intent intent = getIntent();
+        String type = intent.getType();
+
+        // Check if they are inserting contact from external intent
+        if (type != null && type.equals(ContactsContract.RawContacts.CONTENT_TYPE))
+        {
+            String name = intent.getStringExtra(ContactsContract.Intents.Insert.NAME);
+            String phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE);
+            String address = intent.getStringExtra("ADDRESS");
+
+            nameTxt.setText(name);
+            phoneTxt.setText(phone);
+            addressTxt.setText(address);
+        }
     }
 
     public void onActivityResult(int reqCode, int resCode, Intent data){
