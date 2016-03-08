@@ -78,6 +78,7 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
                 Contacts.add(new Contact(nameTxt.getText().toString(), phoneTxt.getText().toString(), emailTxt.getText().toString(), addressTxt.getText().toString(), imageURI));
                 populateList();
                 Toast.makeText(getApplicationContext(), nameTxt.getText().toString() +  " has been added to your Contacts!", Toast.LENGTH_SHORT).show();
+                clearTextViews();
             }
         });
 
@@ -124,6 +125,7 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
             addressTxt.setText(address);
         }
     }
+
 
     public void onActivityResult(int reqCode, int resCode, Intent data){
         if (resCode == RESULT_OK){
@@ -241,5 +243,13 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
         SettingsDialog settings = new SettingsDialog();
         settings.setListener(this);
         settings.show(getFragmentManager(), "settings");
+    }
+
+    private void clearTextViews()
+    {
+        nameTxt.setText("");
+        phoneTxt.setText("");
+        emailTxt.setText("");
+        addressTxt.setText("");
     }
 }
