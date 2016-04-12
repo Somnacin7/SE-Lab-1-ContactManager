@@ -1,9 +1,6 @@
 package com.example.guilhermecortes.contactmanager;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -12,22 +9,19 @@ import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,9 +114,9 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
             String phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE);
             String address = intent.getStringExtra("ADDRESS");
 
-            nameTxt.setText(name);
-            phoneTxt.setText(phone);
-            addressTxt.setText(address);
+            nameTxt.setText(StringEscapeUtils.escapeJava(name));
+            phoneTxt.setText(StringEscapeUtils.escapeJava(phone));
+            addressTxt.setText(StringEscapeUtils.escapeJava(address));
         }
     }
 
