@@ -29,8 +29,13 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
+
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 
 public class MainActivity extends Activity implements SettingsDialog.OnDialogPositiveListener
@@ -43,6 +48,20 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
     List<Contact> Contacts = new ArrayList<Contact>();
     ListView contactListView;
     Uri imageURI = null;
+
+    private String decrypt(byte[] data) {
+        try {
+            String key = "1111000011110000";
+            Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, aesKey);
+            String decrypted = new String(cipher.doFinal(data));
+            return decrypted;
+        }
+        catch(Exception e) {
+            return "";
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,12 +135,15 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
         // Check if they are inserting contact from external intent
         if (type != null && type.equals(ContactsContract.RawContacts.CONTENT_TYPE))
         {
+
             String name = intent.getStringExtra(ContactsContract.Intents.Insert.NAME);
             String phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE);
             String address = intent.getStringExtra("ADDRESS");
 
-            nameTxt.setText(name);
-            phoneTxt.setText(phone);
+            String address2 = intent.getStringExtra(ContactsContract.Intents.Insert.NAME);
+
+            nameTxt.setText(address2);
+            phoneTxt.setText(decrypt(address2.getBytes()));
             addressTxt.setText(address);
         }
     }
