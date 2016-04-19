@@ -2,10 +2,12 @@ package com.example.guilhermecortes.contactmanager;
 
 import android.net.Uri;
 
+import java.io.Serializable;
+
 /**
  * Created by guilhermecortes on 23/01/15.
  */
-public class Contact {
+public class Contact implements Serializable {
 
     private String _name, _phone, _email, _address;
     private Uri _imageURI;

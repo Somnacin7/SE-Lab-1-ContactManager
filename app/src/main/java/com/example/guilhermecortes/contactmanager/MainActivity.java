@@ -22,7 +22,15 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.json.JSONArray;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +71,25 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
         tabSpec.setContent(R.id.tabContactList);
         tabSpec.setIndicator("List");
         tabHost.addTab(tabSpec);
+
+
+        // Load Contacts
+        try
+        {
+            if(Sig.verSig("ContactList",getApplicationContext()))
+            {
+                String fileName = "ContactList";
+                FileInputStream fis = getApplicationContext().openFileInput(fileName);
+                ObjectInputStream is = new ObjectInputStream(fis);
+                List<Contact> loadedContacts = (List<Contact>) is.readObject();
+                is.close();
+                fis.close();
+                Contacts = loadedContacts;
+                populateList();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         final Button addBtn = (Button) findViewById(R.id.btnAdd);
@@ -245,5 +272,23 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
         phoneTxt.setText("");
         emailTxt.setText("");
         addressTxt.setText("");
+    }
+
+
+    // Save contacts
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            String filename = "ContactList";
+            FileOutputStream fos = openFileOutput(filename, getApplicationContext().MODE_PRIVATE);
+            ObjectOutputStream os = new ObjectOutputStream(fos);
+            os.writeObject(Contacts);
+            os.close();
+
+            Sig.Sign(filename,getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
