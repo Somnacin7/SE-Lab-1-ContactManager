@@ -29,6 +29,8 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.scottyab.aescrypt.AESCrypt;
+
 import java.security.Key;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,17 +51,13 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
     ListView contactListView;
     Uri imageURI = null;
 
-    private String decrypt(byte[] data) {
+    private String decrypt(String data) {
         try {
-            String key = "1111000011110000";
-            Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, aesKey);
-            String decrypted = new String(cipher.doFinal(data));
-            return decrypted;
+            String key = "DrOpP3Db4rB4R14N";
+            return AESCrypt.decrypt(key, data);
         }
         catch(Exception e) {
-            return "";
+            return ""; //if there was an exception just return ""
         }
     }
 
@@ -140,11 +138,9 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
             String phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE);
             String address = intent.getStringExtra("ADDRESS");
 
-            String address2 = intent.getStringExtra(ContactsContract.Intents.Insert.NAME);
-
-            nameTxt.setText(address2);
-            phoneTxt.setText(decrypt(address2.getBytes()));
-            addressTxt.setText(address);
+            nameTxt.setText(decrypt(name));
+            phoneTxt.setText(decrypt(phone));
+            addressTxt.setText(decrypt(address));
         }
     }
 
