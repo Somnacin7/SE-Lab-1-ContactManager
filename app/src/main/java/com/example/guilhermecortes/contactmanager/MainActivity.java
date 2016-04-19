@@ -22,15 +22,11 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.json.JSONArray;
-
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import com.scottyab.aescrypt.AESCrypt;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +41,16 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
     List<Contact> Contacts = new ArrayList<Contact>();
     ListView contactListView;
     Uri imageURI = null;
+
+    private String decrypt(String data) {
+        try {
+            String key = "DrOpP3Db4rB4R14N";
+            return AESCrypt.decrypt(key, data);
+        }
+        catch(Exception e) {
+            return ""; //if there was an exception just return ""
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,13 +143,14 @@ public class MainActivity extends Activity implements SettingsDialog.OnDialogPos
         // Check if they are inserting contact from external intent
         if (type != null && type.equals(ContactsContract.RawContacts.CONTENT_TYPE))
         {
+
             String name = intent.getStringExtra(ContactsContract.Intents.Insert.NAME);
             String phone = intent.getStringExtra(ContactsContract.Intents.Insert.PHONE);
             String address = intent.getStringExtra("ADDRESS");
 
-            nameTxt.setText(StringEscapeUtils.escapeJava(name));
-            phoneTxt.setText(StringEscapeUtils.escapeJava(phone));
-            addressTxt.setText(StringEscapeUtils.escapeJava(address));
+            nameTxt.setText(StringEscapeUtils.escapeJava(decrypt(name)));
+            phoneTxt.setText(StringEscapeUtils.escapeJava(decrypt(phone)));
+            addressTxt.setText(StringEscapeUtils.escapeJava(decrypt(address)));
         }
     }
 
